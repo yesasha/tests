@@ -24,6 +24,8 @@ body {
 }
 #cv {
   box-sizing: content-box;
+  width: 256px;
+  height: 256px;
   vertical-align: middle;
 }
 </style>
@@ -35,6 +37,79 @@ body {
 <script type="text/javascript" src="../../js/abstract/abstract-01.js"></script>
 <script type="text/javascript" src="../../js/lib/lib-01.js"></script>
 <script type="text/javascript">
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+
+initCanvas();
+ctx.fillRect(0, 0, cv.width, cv.height);
+
+
+requestAnimationFrame(draw);
+function draw (timestamp) {
+  "use strict";
+
+  var imgData = ctx.getImageData(0, 0, cv.width, cv.height);
+  
+  for (var i = 0; i < 32; i++) {
+    var x1 = Math.floor(Math.random() * 256);
+    var y1 = Math.floor(Math.random() * 256);
+    // y1 = x1;
+    var x2 = Math.floor(Math.random() * 256);
+    // x2 = 256 - x1;
+    var y2 = Math.floor(Math.random() * 256);
+    // y2 = 256 - y1;
+
+    // ctx.fillStyle = toRGBA(255, 255, 255, 1);
+    // ctx.fillStyle = toRGBA(Math.random() * 256, Math.random() * 256, Math.random() * 256, 1);
+//     ctx.fillStyle = toRGBA(Math.round(Math.random()) * 255, Math.round(Math.random()) * 255, Math.round(Math.random()) * 255, 1);
+//     drawRect(x1, y1, x2, y2);
+    drawRect(imgData, x1, y1, x2, y2, Math.random() * 256, Math.random() * 256, Math.random() * 256, 1 / 128);
+
+    // var offset = (y * 256 + x) * 4;
+    // imgData.data[offset + 0] = Math.round(Math.random()) * 255;
+    // imgData.data[offset + 1] = Math.round(Math.random()) * 255;
+    // imgData.data[offset + 2] = Math.round(Math.random()) * 255;
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+  requestAnimationFrame(draw);
+}
+
+
+
+function drawRect (imgData, x1, y1, x2, y2, r, g, b, a) {
+  var x = Math.min(x1, x2);
+  var y = Math.min(y1, y2);
+  var width = Math.abs(x2 - x1);
+  var height = Math.abs(y2 - y1);
+
+  for (var i = 0; i < height; i++) {
+    for (var j = 0; j < width; j++) {
+      var offset = ((y + i) * 256 + x + j) * 4;
+      imgData.data[offset + 0] = imgData.data[offset + 0] + (r - imgData.data[offset + 0]) * a;
+      imgData.data[offset + 1] = imgData.data[offset + 1] + (g - imgData.data[offset + 1]) * a;
+      imgData.data[offset + 2] = imgData.data[offset + 2] + (b - imgData.data[offset + 2]) * a;
+//       imgData.data[offset + 3] = a * 255;
+    }
+  }
+}
+
+function initCanvas () {
+  "use strict";
+
+  var styles = getComputedStyle(cv, null);
+
+  var paddingTop = parseFloat(styles.getPropertyValue('padding-top'));
+  var paddingRight = parseFloat(styles.getPropertyValue('padding-right'));
+  var paddingBottom = parseFloat(styles.getPropertyValue('padding-bottom'));
+  var paddingLeft = parseFloat(styles.getPropertyValue('padding-left'));
+
+  cvWidth = (cv.clientWidth - paddingRight - paddingLeft);
+  cvHeight = (cv.clientHeight - paddingTop - paddingBottom);
+
+  cv.width = cvWidth;
+  cv.height = cvHeight;
+}
 </script>
 </body>
 </html>
