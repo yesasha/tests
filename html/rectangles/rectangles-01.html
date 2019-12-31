@@ -104,8 +104,8 @@ function initCanvas () {
   var paddingBottom = parseFloat(styles.getPropertyValue('padding-bottom'));
   var paddingLeft = parseFloat(styles.getPropertyValue('padding-left'));
 
-  cvWidth = (cv.clientWidth - paddingRight - paddingLeft);
-  cvHeight = (cv.clientHeight - paddingTop - paddingBottom);
+  var cvWidth = (cv.clientWidth - paddingRight - paddingLeft);
+  var cvHeight = (cv.clientHeight - paddingTop - paddingBottom);
 
   cv.width = cvWidth;
   cv.height = cvHeight;
