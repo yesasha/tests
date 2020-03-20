@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Count Circles Game</title>
+<!-- <meta name="description" content=""> -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style type="text/css">
+*, ::before, ::after {
+  box-sizing: inherit;
+  outline: none;
+}
+html {
+  box-sizing: border-box;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../css/normalize/normalize-8.0.1.css">
+<link rel="stylesheet" type="text/css" href="../css/styles/styles-01.css">
+<style type="text/css">
+body {
+  background-color: #1D1E22;
+  color: #ffffff;
+  text-align: center;
+}
+#cv {
+  vertical-align: middle;
+  /*box-sizing: content-box;*/
+  /*width: 256px;*/
+  /*height: 256px;*/
+  /*vertical-align: middle;*/
+}
+#cv2 {
+  display: none;
+}
+#testdiv {
+  display: inline-block;
+  background-color: black;
+  width: 256px;
+  height: 256px;
+  vertical-align: top;
+}
+
+#leftbutton {
+  border: none;
+  display: inline-block;
+  padding: 12px 16px;
+  /*vertical-align: middle;*/
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background-color: black;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  width: 128px;
+}
+
+#rightbutton {
+  border: none;
+  display: inline-block;
+  padding: 12px 16px;
+  /*vertical-align: middle;*/
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background-color: black;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  width: 128px;
+}
+
+</style>
+</head>
+<body>
+<h1>Count Circles</h1>
+<h2 id="lvl">Level 1</h2>
+<canvas id="cv" width="256" height="256"></canvas><br>
+<button id="leftbutton" class="w3-round-large">Button</button><button id="rightbutton" class="w3-round-large">Button</button>
+<!-- <canvas id="cv2" width="32" height="16"></canvas> -->
+<script type="text/javascript" src="../js/roundlib/roundlib-01.js"></script>
+<script type="text/javascript" src="../js/abstract/abstract-01.js"></script>
+<script type="text/javascript" src="../js/lib/lib-02.js"></script>
+<script type="text/javascript">
+var leftbutton = document.getElementById('leftbutton');
+var rightbutton = document.getElementById('rightbutton');
+var lvl = document.getElementById('lvl');
+var lvlNumber = 1;
+var leftbuttonNumber;
+var rightbuttonNumber;
+
+leftbutton.addEventListener('click', function (event) {
+  "use strict";
+
+  if (leftbuttonNumber === circles.length) {
+    lvlNumber++;
+  } else {
+    lvlNumber--;
+  }
+
+  generateCircles();
+  requestAnimationFrame(draw);
+
+
+}, false);
+
+rightbutton.addEventListener('click', function (event) {
+  "use strict";
+
+  if (rightbuttonNumber === circles.length) {
+    lvlNumber++;
+  } else {
+    lvlNumber--;
+  }
+
+  generateCircles();
+  requestAnimationFrame(draw);
+
+
+}, false);
+
+
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+
+var cvWidth = cv.width;
+var cvHeight = cv.height;
+var cvHalfWidth = cvWidth / 2;
+var cvHalfHeight = cvHeight / 2;
+
+
+
+ctx.fillStyle = '#000000';
+ctx.strokeStyle = '#000000';
+ctx.shadowColor = '#000000';
+ctx.shadowBlur = 0;
+ctx.shadowOffsetX = 0;
+ctx.shadowOffsetY = 0;
+ctx.lineWidth = 1;
+ctx.lineCap = 'butt'; // "butt", "round", "square"
+ctx.lineJoin = 'miter'; // "miter", "round", "bevel"
+ctx.miterLimit = 10;
+ctx.font = '16px "Courier New", Courier, monospace';
+ctx.textAlign = 'start'; // "start", "end", "left", "right", "center"
+ctx.textBaseline = 'alphabetic'; // "top", "hanging", "middle", "alphabetic", "ideographic", "bottom"
+ctx.direction = 'inherit'; // ltr, rtl, inherit
+ctx.globalAlpha = 1;
+ctx.globalCompositeOperation = 'source-over'; // source-over, source-atop, source-in, source-out, destination-over, destination-atop, destination-in, destination-out, lighter, copy, xor
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = 'low'; // "low", "medium", "high"
+// There are other defaults that can't be set through object
+ctx.setLineDash([]);
+ctx.setTransform(1, 0, 0, 1, 0, 0);
+ctx.clearRect(0, 0, cvWidth, cvHeight);
+
+
+////////////////////////////////////////////////////////////////////
+
+var lineWidth = 4;
+var halfLineWidth = lineWidth / 2;
+
+var radius = 30;
+var maxRadius = Math.trunc(Math.min(cvWidth, cvHeight) / 2);
+var diameter = radius * 2;
+var maxDiameter = diameter * 2;
+
+
+var internalX = cvWidth - diameter - lineWidth;
+var internalY = cvHeight - diameter - lineWidth;
+
+
+var circles;
+var maxNumberOfCircles = 1;
+
+generateCircles();
+function generateCircles () {
+  "use strict";
+
+  circles = [];
+  maxNumberOfCircles = Math.trunc(Math.random() * 10) + 1;
+
+  creating: for (var i = 0; i < maxNumberOfCircles; i++) {
+
+    // console.log('test');
+
+    // circles[i] = {
+    //   "x": Math.random() * internalX + radius,
+    //   "y": Math.random() * internalY + radius,
+    // };
+
+    circles.push({
+      "x": Math.random() * internalX + radius + halfLineWidth,
+      "y": Math.random() * internalY + radius + halfLineWidth,
+    });
+
+    var len = circles.length - 1;
+    console.log(len);
+
+    for (var j = 0; j < len; j++) {
+      if (dist(circles[j].x, circles[j].y, circles[len].x, circles[len].y) < (diameter + lineWidth)) {
+        delete circles[len];
+        circles.length--;
+        continue creating;
+      } else {}
+    }
+  }
+
+
+  // maxNumberOfCircles++;
+
+}
+
+
+
+ctx.fillStyle = '#FFFFFF';
+ctx.strokeStyle = '#FFFFFF';
+ctx.shadowColor = '#000000';
+ctx.shadowBlur = 0;
+ctx.shadowOffsetX = 0;
+ctx.shadowOffsetY = 0;
+ctx.lineWidth = lineWidth;
+ctx.lineCap = 'butt'; // "butt", "round", "square"
+ctx.lineJoin = 'miter'; // "miter", "round", "bevel"
+ctx.miterLimit = 10;
+ctx.font = '400 32px "Segoe UI", Arial, sans-serif';
+ctx.textAlign = 'center'; // "start", "end", "left", "right", "center"
+ctx.textBaseline = 'top'; // "top", "hanging", "middle", "alphabetic", "ideographic", "bottom"
+ctx.direction = 'inherit'; // ltr, rtl, inherit
+ctx.globalAlpha = 1;
+ctx.globalCompositeOperation = 'source-over'; // source-over, source-atop, source-in, source-out, destination-over, destination-atop, destination-in, destination-out, lighter, copy, xor
+ctx.imageSmoothingEnabled = false;
+ctx.imageSmoothingQuality = 'low'; // "low", "medium", "high"
+
+
+
+
+requestAnimationFrame(draw);
+function draw (timestamp) {
+  "use strict";
+
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, cvWidth, cvHeight);
+
+  // ctx.fillStyle = '#FF0000';
+  // ctx.fillRect(0, 0, 256, 12);
+
+  // ctx.fillStyle = '#0000FF';
+  // ctx.fillRect(0, 12, 256, 48);
+
+  // ctx.fillStyle = '#FF0000';
+  // ctx.fillRect(0, 60, 256, 12);
+
+  // ctx.fillStyle = '#FFFFFF';
+  // ctx.fillText('Count Circles', 128, 20);
+  // ctx.strokeRect(halfLineWidth, halfLineWidth, ctx.measureText('Count Circles').width + lineWidth, 32 + lineWidth);
+
+// ctx.font = "48px serif";
+// ctx.fillText("Hello world", 50, 100);
+
+  // ctx.strokeStyle = '#FFFFFF';
+  // ctx.strokeRect(halfLineWidth, 256 - 32 + halfLineWidth, 128 - lineWidth, 32 - lineWidth);
+
+
+
+  for (var i = 0; i < circles.length; i++) {
+    strokeCircle(ctx, circles[i].x, circles[i].y, radius);
+  }
+
+
+  if (Math.random() > 0.5) {
+    leftbuttonNumber = circles.length;
+    leftbutton.innerHTML = leftbuttonNumber;
+    rightbuttonNumber = Math.trunc(Math.random() * 9) + 1;
+    rightbutton.innerHTML = rightbuttonNumber;
+  } else {
+
+    rightbuttonNumber = circles.length;
+    rightbutton.innerHTML = rightbuttonNumber;
+    leftbuttonNumber = Math.trunc(Math.random() * 9) + 1;
+    leftbutton.innerHTML = leftbuttonNumber;
+
+  }
+
+
+  lvl.innerHTML = 'Level ' + lvlNumber;
+
+
+  // requestAnimationFrame(draw);
+}
+
+
+
+function fillCircle (ctx, x, y, r) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+  ctx.fill();
+  // ctx.stroke();
+}
+
+function strokeCircle (ctx, x, y, r) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+  // ctx.fill();
+  ctx.stroke();
+}
+
+
+
+
+
+</script>
+</body>
+</html>
